@@ -1,0 +1,31 @@
+version: '3.4'
+
+services:
+  webcurrencyconverter:
+    image: webcurrencyconverter
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+    ports:
+      - 5000:80
+      - 5001:443
+
+  database:
+    image: postgres
+    container_name: webcurrencyconverter-db
+    restart: on-failure
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=root
+      - POSTGRES_DB=converterdb
+    ports:
+      - 5002:5432
+    volumes:
+      - ./.data/postgres:/var/lib/postgresql/data/:z
+    networks:
+      - webcurrencyconverter-network
+
+networks:
+  webcurrencyconverter-network:
+    external:
+      name: default_services_network
